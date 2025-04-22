@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const Home: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right');
 
   const slides = [
     {
@@ -22,20 +21,18 @@ const Home: React.FC = () => {
     },
   ];
 
-  const nextSlide = () => {
-    setSlideDirection('right');
+  const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  }, [slides.length]);
 
-  const prevSlide = () => {
-    setSlideDirection('left');
+  const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  }, [slides.length]);
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 5000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [nextSlide]);
 
   return (
     <div>
@@ -83,10 +80,7 @@ const Home: React.FC = () => {
               className={`w-3 h-3 rounded-full transition-colors ${
                 index === currentSlide ? 'bg-white' : 'bg-white/50'
               }`}
-              onClick={() => {
-                setSlideDirection(index > currentSlide ? 'right' : 'left');
-                setCurrentSlide(index);
-              }}
+              onClick={() => setCurrentSlide(index)}
             />
           ))}
         </div>

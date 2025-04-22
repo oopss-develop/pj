@@ -27,3 +27,11 @@ yarn-error.log*
 .vscode/
 *.swp
 *.swo
+
+{
+  "homepage": "https://oopss_develop.github.io/church-website",
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  }
+}
