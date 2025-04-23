@@ -135,7 +135,7 @@ const Home: React.FC = () => {
             </div>
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <h3 className="text-xl font-semibold mb-4">수요 예배</h3>
-              <p className="text-gray-600">오후 7:30</p>
+              <p className="text-gray-600">오후 7:00</p>
             </div>
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <h3 className="text-xl font-semibold mb-4">새벽 기도</h3>
