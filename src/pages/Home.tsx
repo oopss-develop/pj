@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { YouTubeVideo } from '../types/youtube';
+import { fetchLatestVideos } from '../utils/youtube';
 
 const Home: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [videos, setVideos] = useState<YouTubeVideo[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const slides = [
     {
@@ -28,6 +32,15 @@ const Home: React.FC = () => {
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
+
+  useEffect(() => {
+    const loadVideos = async () => {
+      const latestVideos = await fetchLatestVideos();
+      setVideos(latestVideos);
+      setLoading(false);
+    };
+    loadVideos();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 5000);
@@ -149,9 +162,39 @@ const Home: React.FC = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">최근 설교</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Sermon cards will be added here */}
-          </div>
+          {loading ? (
+            <div className="text-center">로딩 중...</div>
+          ) : videos.length > 0 ? (
+            <div className="grid grid-cols-1 gap-8">
+              {/* Latest Sermon - Large Preview */}
+              <div className="w-full aspect-video mb-8">
+                <iframe
+                  className="w-full h-full rounded-lg shadow-lg"
+                  src={`https://www.youtube.com/embed/${videos[0].videoId}`}
+                  title={videos[0].title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              
+              {/* Recent Sermons - Small Previews */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {videos.slice(1).map((video) => (
+                  <div key={video.id} className="aspect-video">
+                    <iframe
+                      className="w-full h-full rounded-lg shadow-md"
+                      src={`https://www.youtube.com/embed/${video.videoId}`}
+                      title={video.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center">영상을 불러올 수 없습니다.</div>
+          )}
         </div>
       </section>
 
